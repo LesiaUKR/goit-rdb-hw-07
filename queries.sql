@@ -1,53 +1,41 @@
 <----- 1 task ----- >
 
-use db_theme_3;
-
-SELECT *,
-     (SELECT customer_id 
-	 FROM orders
-	 WHERE id = order_details.order_id) AS customer_id
-FROM order_details;
+USE db_theme_3;
+SELECT id,
+date,
+YEAR(date) AS year,
+MONTH(date) AS month,
+DAY(date) AS day
+FROM orders;
 
 <----- 2 task ----- >
 
-SELECT *
-FROM order_details
-WHERE order_id IN (SELECT id FROM orders WHERE shipper_id = 3);
+USE db_theme_3;
+SELECT id,
+date,
+DATE_ADD(date, INTERVAL 1 DAY) AS updated_date
+FROM orders;
 
 <----- 3 task ----- >
 
-SELECT order_id, AVG(quantity) as avg_quantity
-FROM (SELECT * FROM order_details WHERE quantity > 10) AS temp_table
-GROUP BY order_id;
+USE db_theme_3;
+SELECT id,
+date,
+UNIX_TIMESTAMP(date) AS seconds
+FROM orders;
 
 <----- 4 task ----- >
 
-WITH TemporalTable AS (
-  SELECT * 
-  FROM order_details 
-  WHERE quantity > 10)
-SELECT order_id, AVG(quantity) as avg_quantity
-FROM TemporalTable
-GROUP BY order_id;
+USE db_theme_3;
+SELECT COUNT(*) AS total_rows
+FROM orders
+WHERE date BETWEEN '1996-07-10 00:00:00' AND '1996-10-08 00:00:00';
+
 
 <----- 5 task ----- >
 
-DROP FUNCTION IF EXISTS Division_function;
-
-DELIMITER //
-
-CREATE FUNCTION Division_function(number1 FLOAT, number2 FLOAT)
-RETURNS FLOAT
-DETERMINISTIC
-NO SQL
-BEGIN
-    DECLARE result FLOAT;
-    SET result = number1 / number2;
-    RETURN result;
-END //
-
-DELIMITER ;
-
-SELECT *, Division_function(quantity, 2.0) AS divided_quantity
-FROM order_details;
-
+USE db_theme_3;
+SELECT id,
+       date,
+       JSON_OBJECT('id', id, 'date', date) AS json_object
+FROM orders;
